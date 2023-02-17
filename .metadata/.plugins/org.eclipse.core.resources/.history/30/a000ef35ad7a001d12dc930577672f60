@@ -1,0 +1,30 @@
+package stegers;
+
+import java.util.ArrayList;
+
+public class pointcontour {
+	
+	/** number of points */
+	public long  num
+	/** row coordinates of the line points (Y coordinate in ImageJ) */;                
+	public ArrayList<Float> row;
+	/** column coordinates of the line points (X coordinate in ImageJ)  */
+	public ArrayList<Float> col;
+	/** angle of normal (measured from the row (Y) axis) */
+	
+	//default constructor
+		public pointcontour()
+		{
+			num = 0;
+			row = new ArrayList<Float>();
+			col = new ArrayList<Float>();
+		}
+		
+		public pointcontour(long nnum, ArrayList<Float> nrow, ArrayList<Float> ncol)
+		{
+		    num=nnum;
+		    row=nrow;
+		    col=ncol;
+		}
+
+}
