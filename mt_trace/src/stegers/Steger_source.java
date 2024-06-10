@@ -177,11 +177,11 @@ public class Steger_source implements Runnable {
 	public void run() {
 		System.out.println("Running");             // TODO Auto-generated method stub
 		 homeDir = System.getProperty("user.home");
-	        directory = new File(homeDir + File.separator + ".sub-images");
+	        directory = new File(homeDir + File.separator + "imageSlices");
 	        directory.mkdir();
 		
 			
-		   pyj();
+		 //  pyj();
 		int maxattempt=10;
 	       int attempt=0;
 	       boolean success = false;
@@ -269,19 +269,66 @@ public class Steger_source implements Runnable {
 	            }
 	        }
 	        
-	        
-	        //writing sub-images into image files
-	        for (int i = 0; i < columns; i++)
-	        {
-	            File outputFile = new File(directory.getPath() + File.separator + "img" + i + ".jpg");
-	            try {
-					ImageIO.write(imgs[i], "jpg", outputFile);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	        }
-	        System.out.println("Sub-images have been created.");
+		// System.out.println(directory.getPath());
+	    //writing sub-images into image files
+		// Check if the directory is writable
+        if (!directory.canWrite()) {
+            System.err.println("The specified directory is not writable: " + directory.getAbsolutePath());
+            return;
+        }
+
+        // Attempt to write a test file to check write permissions
+        try {
+            File testFile = new File(directory, "test.txt");
+            if (testFile.createNewFile()) {
+                System.out.println("Write test succeeded: " + testFile.getAbsolutePath());
+                testFile.delete(); // Clean up the test file
+            } else {
+                System.err.println("Failed to create a test file in the directory: " + directory.getAbsolutePath());
+                return;
+            }
+        } catch (IOException e) {
+            System.err.println("Error during write test: " + e.getMessage());
+            e.printStackTrace();
+            return;
+        }
+
+	    
+        for (int i = 0; i < imgs.length; i++) {
+			// System.out.println(" checking if image contain data" + imgs[i]);
+            try {
+                if (imgs[i] != null) {
+					if (!directory.exists()) {
+						System.err.println("The specified directory does not exist: " + directory.getAbsolutePath());
+						return;
+					}
+					if (!directory.isDirectory()) {
+						System.err.println("The specified path is not a directory: " + directory.getAbsolutePath());
+						return;
+					}
+					
+                    File outputFile = new File(directory.getPath() + File.separator + "img" + i + ".png");
+                    // System.out.println("Image output Path: " + outputFile.getAbsolutePath());
+                    ImageIO.write(imgs[i], "png", outputFile);
+					if (outputFile.exists() && outputFile.isFile()) {
+                        System.out.println("Image " + i + " written successfully.");
+                    } else {
+                        System.err.println("File writing failed for image " + i);
+                    }
+                    System.out.println("Image " + i + " written successfully.");
+                } else {
+                    System.err.println("BufferedImage at index " + i + " is null.");
+                }
+            } catch (IOException e) {
+                System.err.println("Error writing the image " + i + ": " + e.getMessage());
+                e.printStackTrace();
+            } catch (Exception e) {
+                System.err.println("Unexpected error writing the image " + i + ": " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+	        System.out.println("image slices have been created.");
 	        System.out.println("Directory path: " + directory.getPath());
 		
 		for (int i = 0; i < rows; i++)
@@ -336,36 +383,36 @@ public class Steger_source implements Runnable {
 			//blocksplit();
 			matchPair.clear();
 			show_contours();                                                 //  overlaying contours
-			{
-			pointcontour c1= slicecontour.get((int)17);
-			pointcontour c2= slicecontour.get((int)2);
-			Float x1=   c1.col.get((int)(0)); 
-			Float x2=  c1.col.get((int)(1)); 
-			 
-			Float y1=   c1.row.get((int)(0)); 
-			Float y2=  c1.row.get((int)(1)); 
-			int nop = (int)c2.num;
-			Float x3=   c2.col.get(nop-1); 
-			Float x4=  c2.col.get(nop-2); 
-			 
-			Float y3=   c2.row.get(nop-1); 
-			Float y4=  c2.row.get(nop-2);
-			 double langle=  angleBetween2Lines(x1,y1,x2,y2,x3,y3,x4,y4);
-			
-			 double [] p0 =new double[2]; double []p1 =new double[2];
-			 double []p2 =new double[2]; 
-			 p1[0]= x1.doubleValue();
-	  		 p1[1]= y1.doubleValue();
-	  			
-	  		p0[0]= x3.doubleValue();
-	  		p0[1]= y3.doubleValue();
-	  			
-	  		p2[0]= x4.doubleValue();
-	  		p2[1]= y4.doubleValue();
-			double pangle =Math.toDegrees(computeAngle(p0,p1,p2));
-			 System.out.println("test contour 18 and 3 :"+langle +" & "+pangle);
-			
-			}
+//			{
+//			pointcontour c1= slicecontour.get((int)17);
+//			pointcontour c2= slicecontour.get((int)2);
+//			Float x1=   c1.col.get((int)(0)); 
+//			Float x2=  c1.col.get((int)(1)); 
+//			 
+//			Float y1=   c1.row.get((int)(0)); 
+//			Float y2=  c1.row.get((int)(1)); 
+//			int nop = (int)c2.num;
+//			Float x3=   c2.col.get(nop-1); 
+//			Float x4=  c2.col.get(nop-2); 
+//			 
+//			Float y3=   c2.row.get(nop-1); 
+//			Float y4=  c2.row.get(nop-2);
+//			 double langle=  angleBetween2Lines(x1,y1,x2,y2,x3,y3,x4,y4);
+//			
+//			 double [] p0 =new double[2]; double []p1 =new double[2];
+//			 double []p2 =new double[2]; 
+//			 p1[0]= x1.doubleValue();
+//	  		 p1[1]= y1.doubleValue();
+//	  			
+//	  		p0[0]= x3.doubleValue();
+//	  		p0[1]= y3.doubleValue();
+//	  			
+//	  		p2[0]= x4.doubleValue();
+//	  		p2[1]= y4.doubleValue();
+//			double pangle =Math.toDegrees(computeAngle(p0,p1,p2));
+//			 System.out.println("test contour 18 and 3 :"+langle +" & "+pangle);
+//			
+//			}
 //			  imp.setOverlay(image_overlay);
 //			  imp.updateAndRepaintWindow();
 //			  imp.show();	
@@ -1458,7 +1505,7 @@ public class Steger_source implements Runnable {
 		  tcont= new ArrayList<pointcontour>();
 		  
 		  
-		  imp = IJ.openImage("/Users/winja/Desktop/SIV_WORK/CurveTrace1/mt_trace/data/whites.png");
+		  imp = IJ.openImage("whites.png");
 			if(null == imp){                                                                            
 				IJ.noImage();	return;
 			}		
@@ -2185,7 +2232,7 @@ public class Steger_source implements Runnable {
 			//return false;
 		//}
 		Opener opener = new Opener();
-		ImagePlus img = opener.openImage(directory.getPath() + File.separator + "img" + i + ".jpg");
+		ImagePlus img = opener.openImage(directory.getPath() + File.separator + "img" + i + ".png");
 		
 		
 	//	int subimage_Width = img.getWidth();
